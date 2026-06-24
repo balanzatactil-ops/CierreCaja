@@ -526,7 +526,7 @@ let charts = {};
 
 function parseNum(s) {
   if (!s) return 0;
-  return parseFloat(String(s).replace(/\./g, '').replace(',', '.')) || 0;
+  const limpio = String(s).trim().replace(/\./g, '').replace(',', '.'); return parseFloat(limpio) || 0;
 }
 
 function parseFecha(s) {

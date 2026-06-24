@@ -230,9 +230,19 @@ function parseNum(s) {
 
 function parseFecha(s) {
   if (!s) return null;
-  const p = String(s).trim().split('/');
+  const str = String(s).trim();
+  // Formato DD/MM/AAAA
+  const p = str.split('/');
   if (p.length === 3) return new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
-  return new Date(s);
+  // Número de serie de Excel (ej: 46087)
+  const n = parseFloat(str);
+  if (!isNaN(n) && n > 40000) {
+    // Excel epoch: 1 enero 1900 = día 1
+    // JS epoch: 1 enero 1970
+    const excelEpoch = new Date(1899, 11, 30); // 30 dic 1899
+    return new Date(excelEpoch.getTime() + n * 86400000);
+  }
+  return null;
 }
 
 function formatEur(n) {

@@ -322,11 +322,10 @@ async function cargarDatos() {
     sel.innerHTML = '<option value="">Todos</option>';
     ops.forEach(op => sel.innerHTML += `<option value="${op}">${op}</option>`);
 
-    // Fechas por defecto: últimos 90 días
+    // Fechas por defecto: desde 01/01/2026 hasta hoy
     const hoy = new Date();
-    const hace90 = new Date(); hace90.setDate(hace90.getDate() - 90);
     if (!document.getElementById('f-desde').value)
-      document.getElementById('f-desde').valueAsDate = hace90;
+      document.getElementById('f-desde').value = '2026-01-01';
     if (!document.getElementById('f-hasta').value)
       document.getElementById('f-hasta').valueAsDate = hoy;
 
@@ -374,7 +373,7 @@ function renderizar() {
 
   const agrup      = document.getElementById('f-agrupacion').value;
   const porPeriodo = agruparPorPeriodo(datos, agrup);
-  const sortKeys   = Object.keys(porPeriodo).sort();
+  const sortKeys   = Object.keys(porPeriodo).sort((a,b) => a.localeCompare(b));
   const periodos   = sortKeys.map(k => porPeriodo[k].label);
   const ventasPer  = sortKeys.map(k => porPeriodo[k].total);
   const porMes     = agruparPorPeriodo(datos, 'mes');
@@ -519,7 +518,7 @@ function renderizar() {
   });
 
   // Tabla meses
-  const meses = Object.keys(porMes).sort().reverse();
+  const meses = Object.keys(porMes).sort((a,b) => b.localeCompare(a));
   document.getElementById('tbody-meses').innerHTML = meses.map(mes => {
     const m = porMes[mes];
     const tm = m.registros > 0 ? m.total / m.registros : 0;

@@ -322,12 +322,13 @@ async function cargarDatos() {
     sel.innerHTML = '<option value="">Todos</option>';
     ops.forEach(op => sel.innerHTML += `<option value="${op}">${op}</option>`);
 
-    // Fechas por defecto: desde 01/01/2026 hasta hoy
+    // Fechas por defecto: desde 01/01/2026 hasta hoy (siempre)
     const hoy = new Date();
     if (!document.getElementById('f-desde').value)
       document.getElementById('f-desde').value = '2026-01-01';
-    if (!document.getElementById('f-hasta').value)
-      document.getElementById('f-hasta').valueAsDate = hoy;
+    document.getElementById('f-hasta').valueAsDate = hoy;
+    if (!document.getElementById('f-desde').value)
+      document.getElementById('f-desde').value = '2026-01-01';
 
     document.getElementById('last-update').textContent =
       'Actualizado: ' + new Date().toLocaleTimeString('es-ES');

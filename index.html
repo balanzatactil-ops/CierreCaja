@@ -46,6 +46,7 @@
   .header-logo { font-size: 20px; }
   .header-title { font-size: 16px; font-weight: 700; }
   .header-sub { font-size: 11px; color: var(--muted); }
+  .header-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
   .header-right { display: flex; align-items: center; gap: 12px; }
   .btn-refresh { background: var(--border); border: none; color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .2s; }
   .btn-refresh:hover { background: #353848; }
@@ -136,11 +137,10 @@
 <div id="app">
   <header>
     <div class="header-left">
-      <img src="logo.png" alt="Manolita Che" style="height:50px;width:auto;margin-right:12px;">
-      <div>
-        
-        <div class="header-sub" id="last-update">Cargando datos...</div>
-      </div>
+      <div class="header-sub" id="last-update">Cargando datos...</div>
+    </div>
+    <div class="header-center">
+      <img src="logo.png" alt="Manolita Che" style="height:44px;width:auto;">
     </div>
     <div class="header-right">
       <button class="btn-refresh" onclick="cargarDatos()">↻ Actualizar</button>

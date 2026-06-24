@@ -374,8 +374,9 @@ function renderizar() {
 
   const agrup      = document.getElementById('f-agrupacion').value;
   const porPeriodo = agruparPorPeriodo(datos, agrup);
-  const periodos   = Object.keys(porPeriodo).sort();
-  const ventasPer  = periodos.map(p => porPeriodo[p].total);
+  const sortKeys   = Object.keys(porPeriodo).sort();
+  const periodos   = sortKeys.map(k => porPeriodo[k].label);
+  const ventasPer  = sortKeys.map(k => porPeriodo[k].total);
   const porMes     = agruparPorPeriodo(datos, 'mes');
 
   document.getElementById('main-content').innerHTML = `
@@ -523,7 +524,7 @@ function renderizar() {
     const m = porMes[mes];
     const tm = m.registros > 0 ? m.total / m.registros : 0;
     return `<tr>
-      <td><strong>${mes}</strong></td>
+      <td><strong>${m.label}</strong></td>
       <td><span class="badge badge-blue">${m.count}</span></td>
       <td class="num"><strong>${formatEur(m.total)}</strong></td>
       <td class="num">${formatEur(m.efectivo)}</td>
@@ -553,24 +554,34 @@ function agruparPorPeriodo(datos, agrup) {
   const res = {};
   datos.forEach(r => {
     if (!r.fecha) return;
-    let key;
+    let sortKey, label;
     if (agrup === 'dia') {
-      key = r.fecha.toLocaleDateString('es-ES');
+      const y = r.fecha.getFullYear();
+      const mo = String(r.fecha.getMonth()+1).padStart(2,'0');
+      const d  = String(r.fecha.getDate()).padStart(2,'0');
+      sortKey = y + '-' + mo + '-' + d;
+      label   = r.fecha.toLocaleDateString('es-ES');
     } else if (agrup === 'semana') {
       const d = new Date(r.fecha);
       d.setDate(d.getDate() - d.getDay() + 1);
-      key = 'Sem ' + d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'});
+      const y  = d.getFullYear();
+      const mo = String(d.getMonth()+1).padStart(2,'0');
+      const da = String(d.getDate()).padStart(2,'0');
+      sortKey = y + '-' + mo + '-' + da;
+      label   = 'Sem ' + d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit'});
     } else {
-      key = r.fecha.toLocaleDateString('es-ES', {month:'short', year:'numeric'});
+      const y  = r.fecha.getFullYear();
+      const mo = String(r.fecha.getMonth()+1).padStart(2,'0');
+      sortKey  = y + '-' + mo;
+      label    = r.fecha.toLocaleDateString('es-ES', {month:'short', year:'numeric'});
     }
-    if (!res[key]) res[key] = { total:0, efectivo:0, tarjeta:0, iva:0, registros:0, count:0 };
-    res[key].total    += r.total;
-    res[key].efectivo += r.efectivo;
-    res[key].tarjeta  += r.tarjeta;
-
-    res[key].iva      += r.iva;
-    res[key].registros+= r.registros;
-    res[key].count++;
+    if (!res[sortKey]) res[sortKey] = { label, total:0, efectivo:0, tarjeta:0, iva:0, registros:0, count:0 };
+    res[sortKey].total    += r.total;
+    res[sortKey].efectivo += r.efectivo;
+    res[sortKey].tarjeta  += r.tarjeta;
+    res[sortKey].iva      += r.iva;
+    res[sortKey].registros+= r.registros;
+    res[sortKey].count++;
   });
   return res;
 }
